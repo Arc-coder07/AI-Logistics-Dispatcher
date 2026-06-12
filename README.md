@@ -10,7 +10,7 @@
 Replace the image below with your actual demo GIF, video, or screenshot.
 -->
 <p align="center">
-  <img src="/public/image.png" alt="AI Logistics Dispatcher Demo" width="100%" />
+  <img src="/public/image1.png" alt="AI Logistics Dispatcher Demo" width="100%" />
 </p>
 <!-- To use a video instead, replace the img tag with: 
 <video src="your-video-url.mp4" controls="controls" muted="muted" style="max-width: 100%;"></video> 
