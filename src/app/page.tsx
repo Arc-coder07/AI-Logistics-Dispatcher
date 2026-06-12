@@ -1,65 +1,72 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { useSimulation } from "@/hooks/useSimulation";
+import { TopNav } from "@/components/panels/top-nav";
+import { KPIStrip } from "@/components/panels/kpi-strip";
+import { FleetMapWrapper } from "@/components/panels/fleet-map-wrapper";
+import { AlertCenter } from "@/components/panels/alert-center";
+import { OrdersPanel } from "@/components/panels/orders-panel";
+import { CopilotPanel } from "@/components/panels/copilot-panel";
+import { ActivityTimeline } from "@/components/panels/activity-timeline";
+import { DisruptionSimulator } from "@/components/panels/disruption-simulator";
+
+export default function Dashboard() {
+  const [disruptionPanelOpen, setDisruptionPanelOpen] = useState(false);
+
+  // Initialize all simulation loops
+  useSimulation();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="flex h-screen flex-col overflow-hidden">
+      {/* Top Navigation */}
+      <TopNav
+        onToggleDisruptions={() => setDisruptionPanelOpen(!disruptionPanelOpen)}
+        disruptionPanelOpen={disruptionPanelOpen}
+      />
+
+      {/* Disruption Simulator Dropdown */}
+      <DisruptionSimulator
+        open={disruptionPanelOpen}
+        onClose={() => setDisruptionPanelOpen(false)}
+      />
+
+      {/* KPI Strip */}
+      <KPIStrip />
+
+      {/* Main Content Grid */}
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-5 gap-3 px-4 pb-3 overflow-hidden min-h-0">
+        {/* Left Column — Map + Orders */}
+        <div className="lg:col-span-3 flex flex-col gap-3 min-h-0 overflow-hidden">
+          {/* Fleet Map */}
+          <div className="flex-1 min-h-[280px]">
+            <FleetMapWrapper />
+          </div>
+
+          {/* Orders Panel */}
+          <div className="h-[280px] lg:h-[260px] shrink-0">
+            <OrdersPanel />
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Right Column — Alerts + Copilot + Timeline */}
+        <div className="lg:col-span-2 flex flex-col gap-3 min-h-0 overflow-hidden">
+          {/* AI Alert Center */}
+          <div className="flex-1 min-h-[200px]">
+            <AlertCenter />
+          </div>
+
+          {/* AI Copilot */}
+          <div className="h-[280px] lg:h-[260px] shrink-0">
+            <CopilotPanel />
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* Activity Timeline (Bottom) */}
+      <div className="h-[180px] shrink-0 px-4 pb-3">
+        <ActivityTimeline />
+      </div>
     </div>
   );
 }
