@@ -14,6 +14,10 @@ import {
   Navigation,
   Zap,
   Radio,
+  GitBranch,
+  Clock,
+  Wrench,
+  TrendingUp,
 } from "lucide-react";
 
 const EVENT_CONFIG: Record<
@@ -69,6 +73,26 @@ const EVENT_CONFIG: Record<
     icon: Radio,
     color: "text-zinc-400",
     bg: "bg-zinc-500/10",
+  },
+  [TimelineEventType.AGENT_DECISION]: {
+    icon: GitBranch,
+    color: "text-violet-400",
+    bg: "bg-violet-500/10",
+  },
+  [TimelineEventType.DELAY_DETECTED]: {
+    icon: Clock,
+    color: "text-amber-400",
+    bg: "bg-amber-500/10",
+  },
+  [TimelineEventType.VEHICLE_ALERT]: {
+    icon: Wrench,
+    color: "text-orange-400",
+    bg: "bg-orange-500/10",
+  },
+  [TimelineEventType.INSIGHT_GENERATED]: {
+    icon: TrendingUp,
+    color: "text-cyan-400",
+    bg: "bg-cyan-500/10",
   },
 };
 
