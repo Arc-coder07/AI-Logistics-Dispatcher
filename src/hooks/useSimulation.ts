@@ -1,5 +1,5 @@
 // ============================================================
-// useSimulation — Master Simulation Loop (v2)
+// useSimulation — Master Simulation Loop (v3 - Engine Based)
 // ============================================================
 
 "use client";
@@ -12,13 +12,21 @@ import { useDisruptionStore } from "@/store/disruptionStore";
 import { useAlertStore } from "@/store/alertStore";
 import { useVehicleStore } from "@/store/vehicleStore";
 import { useAgentStore } from "@/store/agentStore";
+import { useSimulationStore } from "@/store/simulationStore";
 import { dispatchAgent } from "@/agents/dispatchAgent";
 import { monitoringAgent } from "@/agents/monitoringAgent";
 import { delayAgent } from "@/agents/delayAgent";
 import { fleetAgent } from "@/agents/fleetAgent";
 import { operationsAgent } from "@/agents/operationsAgent";
 import { agentOrchestrator } from "@/agents/agentOrchestrator";
-import { DriverStatus, OrderStatus, TimelineEventType, AgentName } from "@/store/types";
+import { TimelineEventType, AgentName } from "@/store/types";
+
+// Engines
+import { driverEngine } from "@/engines/driverEngine";
+import { orderEngine } from "@/engines/orderEngine";
+import { vehicleEngine } from "@/engines/vehicleEngine";
+import { warehouseEngine } from "@/engines/warehouseEngine";
+import { trafficEngine } from "@/engines/trafficEngine";
 
 export function useSimulation() {
   const initialized = useRef(false);
@@ -41,13 +49,13 @@ export function useSimulation() {
     agentStore.setAgentStatus(AgentName.OPERATIONS, "idle", "System initializing...");
     agentStore.setAgentStatus(AgentName.COMMUNICATION, "idle", "System initializing...");
 
-    // --- Wire up agent orchestrator (inter-agent event subscriptions) ---
+    // --- Wire up agent orchestrator ---
     const cleanupOrchestrator = agentOrchestrator.initialize();
 
     useTimelineStore.getState().addEvent({
       type: TimelineEventType.SYSTEM_EVENT,
       title: "System Online",
-      description: "All 7 AI agents initialized — Autonomous Logistics Simulation Platform active",
+      description: "All 7 AI agents initialized — Digital Twin Simulation active",
     });
 
     // --- Generate initial orders ---
@@ -67,118 +75,86 @@ export function useSimulation() {
       }, (i + 1) * 2000);
     }
 
-    // --- Driver Movement Loop (every 2.5s) ---
-    const movementInterval = setInterval(() => {
-      useDriverStore.getState().moveDriversTowardDestinations();
+    // --- Master Simulation Loop ---
+    let animationFrameId: number;
+    let lastTickTime = performance.now();
+    const BASE_TICK_RATE_MS = 1000; // 1 real second = 1 base tick
 
-      // Distance-based delivery completion: when driver reaches destination
-      const drivers = useDriverStore.getState().drivers;
-      drivers.forEach((driver) => {
-        if (
-          driver.status === DriverStatus.DELIVERING &&
-          driver.destination &&
-          Math.random() < 0.25 // slight randomness to stagger completions
-        ) {
-          useDriverStore.getState().completeDelivery(driver.id);
+    let ticksSinceMonitoring = 0;
+    let ticksSinceDelay = 0;
+    let ticksSinceFleet = 0;
+    let ticksSinceOps = 0;
+    let ticksSinceCleanup = 0;
 
-          if (driver.currentOrderId) {
-            useOrderStore
-              .getState()
-              .updateOrderStatus(driver.currentOrderId, OrderStatus.DELIVERED);
-          }
+    const tickLoop = (time: number) => {
+      const state = useSimulationStore.getState();
+      
+      if (state.isPaused) {
+        lastTickTime = time;
+        animationFrameId = requestAnimationFrame(tickLoop);
+        return;
+      }
+      
+      const delta = time - lastTickTime;
+      const currentTickRate = BASE_TICK_RATE_MS / state.speed;
 
-          useTimelineStore.getState().addEvent({
-            type: TimelineEventType.DELIVERY_COMPLETED,
-            title: "Delivery Completed",
-            description: `${driver.name} completed delivery ${driver.currentOrderId ?? ""}`,
-            agentSource: AgentName.DISPATCH,
-          });
-        }
-      });
-    }, 2500);
+      if (delta >= currentTickRate) {
+        lastTickTime = time - (delta % currentTickRate);
 
-    // --- Order Generation Loop (every 10-18s) ---
-    let orderTimeout: ReturnType<typeof setTimeout>;
-    const scheduleNextOrder = () => {
-      const baseDelay = Math.random() * 8000 + 10000;
-      const disruptionStore = useDisruptionStore.getState();
-      const demandSpikeActive = disruptionStore.isActive("demand-spike" as Parameters<typeof disruptionStore.isActive>[0]);
+        // 1. Run Engines
+        // In the previous version, driver movement was every 2.5s.
+        // We can run driver engine every tick, or throttle it slightly.
+        // Let's just run them every tick.
+        driverEngine.tick();
+        orderEngine.tick();
+        vehicleEngine.tick();
+        warehouseEngine.tick();
+        trafficEngine.tick();
 
-      orderTimeout = setTimeout(() => {
-        const oStore = useOrderStore.getState();
-        const order = oStore.generateOrder();
-        oStore.addOrder(order);
-
-        useTimelineStore.getState().addEvent({
-          type: TimelineEventType.ORDER_CREATED,
-          title: "Order Created",
-          description: `${order.id} — ${order.packageType} (${order.priority})`,
-        });
-
-        setTimeout(() => {
-          dispatchAgent.dispatch(order);
-        }, 1500);
-
-        // Demand spike: generate extra orders faster
-        if (demandSpikeActive) {
-          setTimeout(() => {
-            const extraOrder = useOrderStore.getState().generateOrder();
-            useOrderStore.getState().addOrder(extraOrder);
-            useTimelineStore.getState().addEvent({
-              type: TimelineEventType.ORDER_CREATED,
-              title: "Order Created (Surge)",
-              description: `${extraOrder.id} — ${extraOrder.packageType} (${extraOrder.priority})`,
-            });
-            setTimeout(() => dispatchAgent.dispatch(extraOrder), 800);
-          }, 3000);
+        // 2. Run Agents based on tick counters
+        ticksSinceMonitoring++;
+        if (ticksSinceMonitoring >= 20) {
+          monitoringAgent.checkForIssues();
+          ticksSinceMonitoring = 0;
         }
 
-        scheduleNextOrder();
-      }, demandSpikeActive ? baseDelay * 0.4 : baseDelay);
+        ticksSinceDelay++;
+        if (ticksSinceDelay >= 15) {
+          delayAgent.analyze();
+          ticksSinceDelay = 0;
+        }
+
+        ticksSinceFleet++;
+        if (ticksSinceFleet >= 30) {
+          fleetAgent.monitor();
+          ticksSinceFleet = 0;
+        }
+
+        ticksSinceOps++;
+        if (ticksSinceOps >= 45) {
+          operationsAgent.generateInsights();
+          ticksSinceOps = 0;
+        }
+
+        ticksSinceCleanup++;
+        if (ticksSinceCleanup >= 60) {
+          useOrderStore.getState().removeOldDelivered();
+          useAlertStore.getState().clearOldAlerts();
+          useTimelineStore.getState().clearOldEvents();
+          ticksSinceCleanup = 0;
+        }
+
+        // 3. Advance simulation clock (1 tick = 10 simulated seconds)
+        useSimulationStore.getState().tickForward(10);
+      }
+
+      animationFrameId = requestAnimationFrame(tickLoop);
     };
-    scheduleNextOrder();
 
-    // --- Monitoring Agent Loop (every 20s) ---
-    const monitorInterval = setInterval(() => {
-      monitoringAgent.checkForIssues();
-    }, 20000);
-
-    // --- Delay Agent Loop (every 15s) ---
-    const delayInterval = setInterval(() => {
-      delayAgent.analyze();
-    }, 15000);
-
-    // --- Fleet Agent Loop (every 30s) ---
-    const fleetInterval = setInterval(() => {
-      fleetAgent.monitor();
-    }, 30000);
-
-    // --- Operations Agent Loop (every 45s) ---
-    const opsInterval = setInterval(() => {
-      operationsAgent.generateInsights();
-    }, 45000);
-
-    // --- Cleanup Loop (every 60s) ---
-    const cleanupInterval = setInterval(() => {
-      useOrderStore.getState().removeOldDelivered();
-      useAlertStore.getState().clearOldAlerts();
-      useTimelineStore.getState().clearOldEvents();
-    }, 60000);
-
-    // First agent checks after startup
-    setTimeout(() => monitoringAgent.checkForIssues(), 15000);
-    setTimeout(() => delayAgent.analyze(), 18000);
-    setTimeout(() => fleetAgent.monitor(), 25000);
-    setTimeout(() => operationsAgent.generateInsights(), 35000);
+    animationFrameId = requestAnimationFrame(tickLoop);
 
     return () => {
-      clearInterval(movementInterval);
-      clearInterval(monitorInterval);
-      clearInterval(delayInterval);
-      clearInterval(fleetInterval);
-      clearInterval(opsInterval);
-      clearInterval(cleanupInterval);
-      clearTimeout(orderTimeout);
+      cancelAnimationFrame(animationFrameId);
       cleanupOrchestrator();
       initialized.current = false;
     };

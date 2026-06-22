@@ -57,6 +57,20 @@ export const useDisruptionStore = create<DisruptionStore>((set, get) => ({
       icon: "⛔",
       description: "Simulates a major road closure requiring reroutes",
     },
+    {
+      type: DisruptionType.WAREHOUSE_FAILURE,
+      active: false,
+      label: "Warehouse Failure",
+      icon: "🔥",
+      description: "Simulates a complete loading bay outage",
+    },
+    {
+      type: DisruptionType.DRIVER_STRIKE,
+      active: false,
+      label: "Driver Strike",
+      icon: "🪧",
+      description: "Simulates a 50% reduction in fleet availability",
+    },
   ],
 
   toggleDisruption: (type) => {

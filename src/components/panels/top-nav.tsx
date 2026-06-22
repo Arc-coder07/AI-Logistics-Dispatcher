@@ -7,6 +7,7 @@ import { Zap, Activity, BarChart3, Brain } from "lucide-react";
 import { useAlertStore } from "@/store/alertStore";
 import { useDisruptionStore } from "@/store/disruptionStore";
 import { useAgentStore } from "@/store/agentStore";
+import { SimulationControls } from "@/components/panels/simulation-controls";
 import { cn } from "@/lib/utils";
 
 type View = "dispatcher" | "analytics";
@@ -131,10 +132,10 @@ export function TopNav({
           </div>
         )}
 
-        {/* Live clock */}
-        <span className="hidden lg:block font-mono text-[11px] text-zinc-600 tabular-nums">
-          {time}
-        </span>
+        {/* Simulation Controls */}
+        <div className="hidden lg:block">
+          <SimulationControls />
+        </div>
 
         {/* Disruption toggle */}
         <button

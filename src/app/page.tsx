@@ -12,6 +12,8 @@ import { ActivityTimeline } from "@/components/panels/activity-timeline";
 import { DisruptionSimulator } from "@/components/panels/disruption-simulator";
 import { AgentCollaborationView } from "@/components/panels/agent-collaboration-view";
 import { DecisionFeed } from "@/components/panels/decision-feed";
+import { WarehousePanel } from "@/components/panels/warehouse-panel";
+import { DeliveryReplay } from "@/components/panels/delivery-replay";
 
 type View = "dispatcher" | "analytics";
 
@@ -46,15 +48,20 @@ export default function Dashboard() {
           {/* Main 3-column grid */}
           <div className="flex-1 grid grid-cols-12 gap-2.5 px-3 pt-2.5 min-h-0 overflow-hidden">
 
-            {/* Col 1-5: Map (top) + Orders (bottom) */}
+            {/* Col 1-5: Map (top) + Orders/Warehouse (bottom) */}
             <div className="col-span-12 lg:col-span-5 flex flex-col gap-2.5 min-h-0 overflow-hidden">
               {/* Fleet Map — takes majority of height */}
               <div className="flex-1 min-h-[250px]">
                 <FleetMapWrapper />
               </div>
-              {/* Orders Panel */}
-              <div className="h-[220px] shrink-0">
-                <OrdersPanel />
+              {/* Bottom row of left column */}
+              <div className="flex gap-2.5 h-[220px] shrink-0">
+                <div className="w-[40%] shrink-0">
+                  <WarehousePanel />
+                </div>
+                <div className="w-[60%] shrink-0">
+                  <OrdersPanel />
+                </div>
               </div>
             </div>
 
@@ -84,9 +91,14 @@ export default function Dashboard() {
 
           </div>
 
-          {/* Activity Timeline — bottom bar */}
-          <div className="h-[150px] shrink-0 px-3 pb-2.5 pt-2">
-            <ActivityTimeline />
+          {/* Activity Timeline & Replay — bottom bar */}
+          <div className="h-[160px] shrink-0 px-3 pb-2.5 pt-2 flex gap-2.5">
+            <div className="flex-1 min-w-0">
+              <ActivityTimeline />
+            </div>
+            <div className="w-[350px] shrink-0">
+              <DeliveryReplay />
+            </div>
           </div>
         </div>
       )}
