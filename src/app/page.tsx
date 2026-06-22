@@ -14,6 +14,9 @@ import { AgentCollaborationView } from "@/components/panels/agent-collaboration-
 import { DecisionFeed } from "@/components/panels/decision-feed";
 import { WarehousePanel } from "@/components/panels/warehouse-panel";
 import { DeliveryReplay } from "@/components/panels/delivery-replay";
+import { FleetHealthPanel } from "@/components/panels/fleet-health-panel";
+import { DriverLeaderboard } from "@/components/panels/driver-leaderboard";
+import { PredictiveCards } from "@/components/panels/predictive-cards";
 
 type View = "dispatcher" | "analytics";
 
@@ -107,34 +110,29 @@ export default function Dashboard() {
       {currentView === "analytics" && (
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3">
           <div className="max-w-5xl mx-auto space-y-4">
-            {/* Placeholder — Phase 4 */}
-            <div className="rounded-xl border border-white/[0.06] bg-white/[0.01] p-8 text-center">
-              <div className="text-4xl mb-4">📊</div>
-              <h2 className="text-lg font-semibold text-zinc-200 mb-2">
-                Executive Analytics
-              </h2>
-              <p className="text-sm text-zinc-500 max-w-md mx-auto">
-                The Executive Analytics layer is coming in Phase 4. It will show
-                revenue metrics, SLA compliance trends, fleet utilization heatmaps,
-                and Operations Agent insights.
-              </p>
-              <div className="mt-6 grid grid-cols-3 gap-4">
-                {["Revenue / Delivery", "SLA Compliance", "Fleet Utilization"].map((label) => (
-                  <div
-                    key={label}
-                    className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4"
-                  >
-                    <div className="h-16 bg-gradient-to-br from-zinc-800/50 to-zinc-900/50 rounded animate-pulse mb-2" />
-                    <p className="text-xs text-zinc-600">{label}</p>
-                  </div>
-                ))}
+            {/* Predictive Analytics */}
+            <div className="h-[120px]">
+              <PredictiveCards />
+            </div>
+
+            {/* Fleet Health & Driver Performance */}
+            <div className="grid grid-cols-12 gap-4 h-[400px]">
+              <div className="col-span-12 lg:col-span-8 h-full">
+                <FleetHealthPanel />
+              </div>
+              <div className="col-span-12 lg:col-span-4 h-full">
+                <DriverLeaderboard />
               </div>
             </div>
 
             {/* Agent Decisions in Analytics view */}
-            <div className="grid grid-cols-2 gap-4">
-              <AgentCollaborationView />
-              <DecisionFeed />
+            <div className="grid grid-cols-2 gap-4 h-[300px]">
+              <div className="h-full">
+                <AgentCollaborationView />
+              </div>
+              <div className="h-full">
+                <DecisionFeed />
+              </div>
             </div>
           </div>
         </div>
