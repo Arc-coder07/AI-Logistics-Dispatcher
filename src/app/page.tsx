@@ -45,11 +45,11 @@ export default function Dashboard() {
 
       {/* Expanded Modal Overlay */}
       {expandedPanel && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-6 lg:p-12">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-md p-6 lg:p-12">
           <div className="relative w-full h-full max-w-[1400px] flex flex-col bg-[#09090b] rounded-2xl border border-white/10 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
             <button
               onClick={() => setExpandedPanel(null)}
-              className="absolute top-4 right-4 z-[60] p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors"
+              className="absolute top-4 right-4 z-[10000] p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors"
             >
               <X className="h-5 w-5" />
             </button>
