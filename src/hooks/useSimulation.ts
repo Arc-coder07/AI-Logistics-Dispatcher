@@ -13,6 +13,8 @@ import { useAlertStore } from "@/store/alertStore";
 import { useVehicleStore } from "@/store/vehicleStore";
 import { useAgentStore } from "@/store/agentStore";
 import { useSimulationStore } from "@/store/simulationStore";
+import { useDriverPerformanceStore } from "@/store/driverPerformanceStore";
+import { useAnalyticsStore } from "@/store/analyticsStore";
 import { dispatchAgent } from "@/agents/dispatchAgent";
 import { monitoringAgent } from "@/agents/monitoringAgent";
 import { delayAgent } from "@/agents/delayAgent";
@@ -38,6 +40,7 @@ export function useSimulation() {
     // --- Initialize all stores ---
     useDriverStore.getState().initializeDrivers();
     useVehicleStore.getState().initializeVehicles();
+    useDriverPerformanceStore.getState().initializePerformances();
 
     // --- Mark all agents as idle on boot ---
     const agentStore = useAgentStore.getState();
@@ -85,6 +88,7 @@ export function useSimulation() {
     let ticksSinceFleet = 0;
     let ticksSinceOps = 0;
     let ticksSinceCleanup = 0;
+    let ticksSinceAnalyticsUpdate = 0;
 
     const tickLoop = (time: number) => {
       const state = useSimulationStore.getState();
@@ -142,6 +146,12 @@ export function useSimulation() {
           useAlertStore.getState().clearOldAlerts();
           useTimelineStore.getState().clearOldEvents();
           ticksSinceCleanup = 0;
+        }
+
+        ticksSinceAnalyticsUpdate++;
+        if (ticksSinceAnalyticsUpdate >= 30) {
+          useAnalyticsStore.getState().updatePredictions();
+          ticksSinceAnalyticsUpdate = 0;
         }
 
         // 3. Advance simulation clock (1 tick = 10 simulated seconds)
