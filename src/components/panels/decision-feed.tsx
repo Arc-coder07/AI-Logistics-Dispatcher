@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Maximize2 } from "lucide-react";
 import { useAgentStore, AGENT_META } from "@/store/agentStore";
 import { AgentDecision, AgentName } from "@/store/types";
 import { formatTime, cn } from "@/lib/utils";
@@ -105,10 +106,15 @@ function DecisionCard({ decision }: { decision: AgentDecision }) {
   );
 }
 
-export function DecisionFeed() {
+interface DecisionFeedProps {
+  isExpanded?: boolean;
+  onExpand?: () => void;
+}
+
+export function DecisionFeed({ isExpanded, onExpand }: DecisionFeedProps = {}) {
   const { decisions } = useAgentStore();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const displayDecisions = decisions.slice(0, 30);
+  const displayDecisions = isExpanded ? decisions : decisions.slice(0, 30);
 
   // Auto-scroll on new decisions
   useEffect(() => {
@@ -144,6 +150,15 @@ export function DecisionFeed() {
             </span>
           )}
           <span className="text-[10px] text-zinc-600">{decisions.length} total</span>
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              className="p-1 hover:bg-white/[0.1] rounded text-zinc-500 hover:text-zinc-300 transition"
+              title="Expand Feed"
+            >
+              <Maximize2 className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
 

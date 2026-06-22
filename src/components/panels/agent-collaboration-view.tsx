@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useAgentStore, AGENT_META } from "@/store/agentStore";
 import { AgentName } from "@/store/types";
+import { Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const AGENT_ORDER: AgentName[] = [
@@ -29,7 +30,12 @@ const STATUS_DOT = {
   complete: "bg-emerald-400",
 };
 
-export function AgentCollaborationView() {
+interface AgentCollaborationViewProps {
+  isExpanded?: boolean;
+  onExpand?: () => void;
+}
+
+export function AgentCollaborationView({ isExpanded, onExpand }: AgentCollaborationViewProps = {}) {
   const { agents, chains, activeChainId } = useAgentStore();
   const activeChain = chains.find((c) => c.id === activeChainId);
   const recentChains = chains.filter((c) => c.status === "complete").slice(0, 3);
@@ -52,6 +58,15 @@ export function AgentCollaborationView() {
             </span>
           )}
           <span className="text-[10px] text-zinc-600">7 agents</span>
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              className="p-1 hover:bg-white/[0.1] rounded text-zinc-500 hover:text-zinc-300 transition ml-1"
+              title="Expand Network"
+            >
+              <Maximize2 className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
 

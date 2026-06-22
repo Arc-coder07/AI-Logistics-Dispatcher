@@ -3,11 +3,16 @@
 import { useTimelineStore } from "@/store/timelineStore";
 import { TimelineItem } from "@/components/ui/timeline-item";
 import { AnimatePresence } from "framer-motion";
-import { Radio } from "lucide-react";
+import { Radio, Maximize2 } from "lucide-react";
 
-export function ActivityTimeline() {
+interface ActivityTimelineProps {
+  isExpanded?: boolean;
+  onExpand?: () => void;
+}
+
+export function ActivityTimeline({ isExpanded, onExpand }: ActivityTimelineProps = {}) {
   const events = useTimelineStore((s) => s.events);
-  const recentEvents = events.slice(0, 25);
+  const recentEvents = isExpanded ? events : events.slice(0, 25);
 
   return (
     <div className="flex h-full flex-col rounded-xl border border-white/[0.06] bg-white/[0.01]">
@@ -21,9 +26,20 @@ export function ActivityTimeline() {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-blue-400" />
           </span>
         </div>
-        <span className="text-[10px] text-zinc-600">
-          {events.length} events
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-zinc-600">
+            {events.length} events
+          </span>
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              className="p-1 hover:bg-white/[0.1] rounded text-zinc-500 hover:text-zinc-300 transition"
+              title="Expand Timeline"
+            >
+              <Maximize2 className="h-3 w-3" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Timeline */}

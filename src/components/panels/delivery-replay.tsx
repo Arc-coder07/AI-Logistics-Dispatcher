@@ -3,11 +3,17 @@
 import { useState } from "react";
 import { useDeliveryHistoryStore } from "@/store/deliveryHistoryStore";
 import { DeliveryRecord } from "@/store/types";
-import { X, Play, RotateCcw, Package, Clock, Truck } from "lucide-react";
+import { X, Play, RotateCcw, Package, Clock, Truck, Maximize2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function DeliveryReplay() {
+interface DeliveryReplayProps {
+  isExpanded?: boolean;
+  onExpand?: () => void;
+}
+
+export function DeliveryReplay({ isExpanded, onExpand }: DeliveryReplayProps = {}) {
   const records = useDeliveryHistoryStore((s) => s.records);
+  const displayRecords = isExpanded ? records : records.slice(0, 50);
   const [selectedRecord, setSelectedRecord] = useState<DeliveryRecord | null>(null);
 
   return (
@@ -22,19 +28,28 @@ export function DeliveryReplay() {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-[10px] text-zinc-600">{records.length} records</span>
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              className="p-1 hover:bg-white/[0.1] rounded text-zinc-500 hover:text-zinc-300 transition"
+              title="Expand Replay"
+            >
+              <Maximize2 className="h-3 w-3" />
+            </button>
+          )}
         </div>
       </div>
 
       {!selectedRecord ? (
         <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
-          {records.length === 0 ? (
+          {displayRecords.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full py-12 text-center text-zinc-500">
               <RotateCcw className="h-8 w-8 mb-3 opacity-20" />
               <p className="text-xs">No completed deliveries yet.</p>
               <p className="text-[10px]">History will appear here for replay.</p>
             </div>
           ) : (
-            records.map((record) => (
+            displayRecords.map((record) => (
               <button
                 key={record.id}
                 onClick={() => setSelectedRecord(record)}
