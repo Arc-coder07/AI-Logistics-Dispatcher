@@ -18,6 +18,7 @@ interface OrderStore {
   generateOrder: () => Order;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   assignDriver: (orderId: string, driverId: string, driverName: string, reasoning: string) => void;
+  updateOrderDelayRisk: (orderId: string, riskScore: number) => void;
   getActiveOrders: () => Order[];
   getDelayedOrders: () => Order[];
   getOrdersByStatus: (status: OrderStatus) => Order[];
@@ -64,9 +65,11 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
       assignedDriverName: null,
       eta: Math.floor(Math.random() * 30) + 10,
       createdAt: new Date(),
+      assignedAt: null,
       aiReasoning: null,
       customerName: pickRandom(CUSTOMER_NAMES),
       packageType: pickRandom(PACKAGE_TYPES),
+      delayRisk: 0,
     };
 
     return order;
@@ -90,8 +93,17 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
               assignedDriverId: driverId,
               assignedDriverName: driverName,
               aiReasoning: reasoning,
+              assignedAt: new Date(),
             }
           : o
+      ),
+    }));
+  },
+
+  updateOrderDelayRisk: (orderId, riskScore) => {
+    set((state) => ({
+      orders: state.orders.map((o) =>
+        o.id === orderId ? { ...o, delayRisk: riskScore } : o
       ),
     }));
   },

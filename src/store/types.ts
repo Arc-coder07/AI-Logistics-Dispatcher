@@ -241,6 +241,38 @@ export interface KPIData {
   delayedTrend: number;
 }
 
+// --- Simulation & Digital Twin Types ---
+
+export interface SimulationState {
+  speed: number;
+  isPaused: boolean;
+  tick: number;
+  elapsedTime: number; // in seconds of simulation time
+}
+
+export interface Warehouse {
+  id: string;
+  name: string;
+  location: Coordinates;
+  loadingQueue: string[]; // Order IDs waiting for pickup
+  pendingPickups: number;
+  utilization: number; // 0-100 percentage
+  capacity: number; // max concurrent loadings
+  status: "nominal" | "bottleneck" | "failure";
+}
+
+export interface DeliveryRecord {
+  id: string; // the order ID
+  order: Order;
+  driverId: string;
+  driverName: string;
+  events: TimelineEvent[];
+  startedAt: Date;
+  completedAt: Date;
+  totalTime: number; // minutes
+  delayDuration: number; // minutes
+}
+
 // --- Event Bus Types ---
 
 export type EventType =
@@ -262,7 +294,12 @@ export type EventType =
   | "REROUTE_CALCULATED"
   | "AGENT_DECISION_MADE"
   | "COLLABORATION_CHAIN_STARTED"
-  | "COLLABORATION_CHAIN_COMPLETED";
+  | "COLLABORATION_CHAIN_COMPLETED"
+  | "SIMULATION_PAUSED"
+  | "SIMULATION_RESUMED"
+  | "SIMULATION_SPEED_CHANGED"
+  | "WAREHOUSE_BOTTLENECK"
+  | "DELIVERY_RECORD_SAVED";
 
 export interface BusEvent {
   type: EventType;
