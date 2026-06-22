@@ -1,5 +1,5 @@
 // ============================================================
-// AI Logistics Dispatcher — Core Type Definitions
+// AI Logistics Dispatcher — Core Type Definitions (v2)
 // ============================================================
 
 // --- Enums ---
@@ -35,6 +35,8 @@ export enum AlertType {
   ROAD_CLOSURE = "road-closure",
   DELAY = "delay",
   OVERLOAD = "overload",
+  MAINTENANCE = "maintenance",
+  WAREHOUSE = "warehouse",
 }
 
 export enum AlertSeverity {
@@ -56,6 +58,8 @@ export enum DisruptionType {
   VEHICLE_BREAKDOWN = "vehicle-breakdown",
   DEMAND_SPIKE = "demand-spike",
   ROAD_CLOSURE = "road-closure",
+  WAREHOUSE_FAILURE = "warehouse-failure",
+  DRIVER_STRIKE = "driver-strike",
 }
 
 export enum TimelineEventType {
@@ -69,6 +73,20 @@ export enum TimelineEventType {
   DISRUPTION_ENDED = "disruption-ended",
   ROUTE_UPDATED = "route-updated",
   SYSTEM_EVENT = "system-event",
+  AGENT_DECISION = "agent-decision",
+  DELAY_DETECTED = "delay-detected",
+  VEHICLE_ALERT = "vehicle-alert",
+  INSIGHT_GENERATED = "insight-generated",
+}
+
+export enum AgentName {
+  DISPATCH = "Dispatch Agent",
+  ROUTE = "Route Agent",
+  DELAY = "Delay Agent",
+  FLEET = "Fleet Agent",
+  OPERATIONS = "Operations Agent",
+  COMMUNICATION = "Communication Agent",
+  MONITORING = "Monitoring Agent",
 }
 
 // --- Data Types ---
@@ -91,6 +109,7 @@ export interface Driver {
   completedDeliveries: number;
   rating: number;
   vehicleType: string;
+  assignedAt?: Date | null; // when current delivery was assigned
 }
 
 export interface Order {
@@ -109,9 +128,11 @@ export interface Order {
   assignedDriverName: string | null;
   eta: number; // minutes
   createdAt: Date;
+  assignedAt: Date | null;
   aiReasoning: string | null;
   customerName: string;
   packageType: string;
+  delayRisk?: number; // 0-100 percentage from DelayAgent
 }
 
 export interface Alert {
@@ -129,19 +150,7 @@ export interface Alert {
   createdAt: Date;
   resolvedAt: Date | null;
   resolvedBy: string | null;
-}
-
-export interface AIRecommendation {
-  id: string;
-  type: "dispatch" | "reroute" | "delay" | "prioritize";
-  title: string;
-  description: string;
-  reasoning: string[];
-  confidence: number;
-  predictedImpact: string;
-  affectedEntities: string[];
-  actionStatus: AlertActionStatus;
-  createdAt: Date;
+  agentSource?: AgentName;
 }
 
 export interface TimelineEvent {
@@ -152,6 +161,7 @@ export interface TimelineEvent {
   timestamp: Date;
   icon?: string;
   metadata?: Record<string, string | number>;
+  agentSource?: AgentName;
 }
 
 export interface CopilotMessage {
@@ -159,6 +169,7 @@ export interface CopilotMessage {
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  agentsSources?: AgentName[];
 }
 
 export interface DisruptionEvent {
@@ -172,7 +183,52 @@ export interface DisruptionEvent {
   endedAt: Date | null;
 }
 
-// --- Store Types ---
+// --- Agent Decision Types ---
+
+export interface AgentDecision {
+  id: string;
+  agentName: AgentName;
+  action: string;
+  reasoning: string;
+  confidence: number; // 0-100
+  impact: string;
+  timestamp: Date;
+  relatedEntities: string[]; // order IDs, driver IDs, etc.
+  triggeredBy?: string; // ID of decision that triggered this one
+  chainId?: string; // ID of collaboration chain this belongs to
+  status: "thinking" | "acting" | "complete" | "failed";
+}
+
+export interface CollaborationChain {
+  id: string;
+  trigger: {
+    agentName: AgentName;
+    event: string;
+    description: string;
+  };
+  steps: AgentDecision[];
+  startedAt: Date;
+  completedAt: Date | null;
+  status: "active" | "complete" | "failed";
+}
+
+// --- Vehicle Types ---
+
+export interface Vehicle {
+  id: string; // matches driver id
+  driverId: string;
+  driverName: string;
+  type: string; // Van, Truck, Sedan
+  fuelLevel: number; // 0-100%
+  mileage: number; // km driven total
+  batteryLevel: number; // 0-100% (for electric metrics)
+  engineHealth: number; // 0-100%
+  riskScore: number; // 0-100% (computed from above)
+  lastMaintenance: number; // km ago
+  distanceSinceRefuel: number; // km since last refuel
+}
+
+// --- KPI & Analytics ---
 
 export interface KPIData {
   activeOrders: number;
@@ -198,7 +254,15 @@ export type EventType =
   | "APPROVAL_ACTION"
   | "KPI_UPDATE"
   | "DRIVER_MOVED"
-  | "ORDER_STATUS_CHANGED";
+  | "ORDER_STATUS_CHANGED"
+  | "DELAY_RISK_DETECTED"
+  | "VEHICLE_RISK_DETECTED"
+  | "MAINTENANCE_RECOMMENDED"
+  | "INSIGHT_GENERATED"
+  | "REROUTE_CALCULATED"
+  | "AGENT_DECISION_MADE"
+  | "COLLABORATION_CHAIN_STARTED"
+  | "COLLABORATION_CHAIN_COMPLETED";
 
 export interface BusEvent {
   type: EventType;
