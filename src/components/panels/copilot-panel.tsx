@@ -39,7 +39,7 @@ export function CopilotPanel() {
     setTimeout(() => {
       const response = communicationAgent.generateResponse(text);
       addAssistantMessage(response);
-    }, 800 + Math.random() * 700);
+    }, 1200);
   };
 
   return (
