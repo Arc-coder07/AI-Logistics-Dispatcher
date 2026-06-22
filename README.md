@@ -1,4 +1,4 @@
-<![CDATA[<div align="center">
+<div align="center">
 
 # 🚀 AI Logistics Dispatcher
 
@@ -21,11 +21,17 @@ A sophisticated **digital twin** of a logistics network running entirely in the 
 
 ## 🎥 Demo
 
-<video src="/public/demo-video.mov" controls width="100%"></video>  
+<!-- TO ADD YOUR DEMO VIDEO:
+     1. Go to https://github.com/Arc-coder07/AI-Logistics-Dispatcher/issues/new
+     2. Drag & drop your .mov file into the comment box
+     3. GitHub will upload it and give you a URL like:
+        https://github.com/user-attachments/assets/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+     4. Replace the URL in the line below with your actual video URL
+-->
 
-https://github.com/user-attachments/assets/demo-video-placeholder
+https://github.com/user-attachments/assets/REPLACE-WITH-YOUR-VIDEO-ID
 
-> **⬆️ Replace the link above** with your actual demo video URL. Upload the screen recording (`Screen Recording 2026-06-23 at 12.42.24 AM.mov` from your `public/` folder) to a [GitHub Issue comment](https://github.com/Arc-coder07/AI-Logistics-Dispatcher/issues/new) — GitHub will host it and give you a permanent URL. Then paste that URL here.
+> ⬆️ **To activate the video above:** Upload your screen recording to a [GitHub Issue comment](https://github.com/Arc-coder07/AI-Logistics-Dispatcher/issues/new), copy the generated URL, and replace the placeholder URL above.
 
 ---
 
@@ -35,7 +41,7 @@ https://github.com/user-attachments/assets/demo-video-placeholder
 
 ### 🗺️ Dispatcher View — Real-Time Operations
 
-<img src="/public/image2.png" alt="Dispatcher View — Live fleet map, orders, warehouses, agents, and disruption simulation" width="1000"/>
+<img src="./public/image2.png" alt="Dispatcher View — Live fleet map, orders, warehouses, agents, and disruption simulation" width="1000"/>
 
 > The main operational interface. Watch live vehicles move across the grid, manage active orders, track warehouse capacity, and trigger disruptions in real-time. Features a 3-column layout with the fleet map, alert center, AI copilot, agent collaboration network, and decision feed — all updating simultaneously.
 
@@ -43,7 +49,7 @@ https://github.com/user-attachments/assets/demo-video-placeholder
 
 ### 📊 Analytics View — Executive KPI Dashboard
 
-<img src="/public/image3.png" alt="Analytics View — Fleet health, driver leaderboard, and predictive delay risk" width="1000"/>
+<img src="./public/image3.png" alt="Analytics View — Fleet health, driver leaderboard, and predictive delay risk" width="1000"/>
 
 > Executive-level KPI dashboard. View Fleet Health (battery degradation & maintenance risk scores), Driver Leaderboards with on-time percentage and fuel efficiency, and Predictive Delay Risk cards with real-time SLA compliance calculations.
 
@@ -51,7 +57,7 @@ https://github.com/user-attachments/assets/demo-video-placeholder
 
 ### 🏠 Overview
 
-<img src="/public/image1.png" alt="Project Overview — Full interface at a glance" width="1000"/>
+<img src="./public/image1.png" alt="Project Overview — Full interface at a glance" width="1000"/>
 
 > Full interface at a glance — showing the complete control tower experience with all panels active and agents processing events.
 
@@ -200,7 +206,6 @@ When a disruption occurs (e.g., "Traffic Jam"), the orchestrator fires an event 
 | `analyticsStore` | Predictive analytics and trend data |
 | `driverPerformanceStore` | On-time %, fuel efficiency, ratings |
 | `deliveryHistoryStore` | Completed delivery records for replay |
-| `alertStore` | Alert lifecycle (pending → approved/rejected) |
 
 ---
 
@@ -268,57 +273,57 @@ AI-Logistics-Dispatcher/
 │   │
 │   ├── components/             # 🎨 UI Components
 │   │   ├── panels/                 # Major dashboard panels (18 files)
-│   │   │   ├── top-nav.tsx             # Navigation bar with view toggle
-│   │   │   ├── kpi-strip.tsx           # Real-time KPI indicators
-│   │   │   ├── fleet-map.tsx           # Leaflet map with live vehicles
-│   │   │   ├── fleet-map-wrapper.tsx   # Dynamic import wrapper (SSR fix)
-│   │   │   ├── alert-center.tsx        # Alert management panel
-│   │   │   ├── orders-panel.tsx        # Active orders list
-│   │   │   ├── copilot-panel.tsx       # AI assistant chat interface
-│   │   │   ├── warehouse-panel.tsx     # Warehouse status monitor
-│   │   │   ├── disruption-simulator.tsx# Disruption trigger controls
-│   │   │   ├── agent-collaboration-view.tsx # Agent network visualizer
-│   │   │   ├── decision-feed.tsx       # Real-time agent decision log
-│   │   │   ├── activity-timeline.tsx   # Chronological event feed
-│   │   │   ├── delivery-replay.tsx     # Delivery history replay
-│   │   │   ├── simulation-controls.tsx # Speed & pause controls
-│   │   │   ├── fleet-health-panel.tsx  # Vehicle health dashboard
-│   │   │   ├── driver-leaderboard.tsx  # Driver performance ranking
-│   │   │   ├── predictive-cards.tsx    # Predictive analytics cards
-│   │   │   └── executive-metrics.tsx   # Executive KPI dashboard
+│   │   │   ├── top-nav.tsx
+│   │   │   ├── kpi-strip.tsx
+│   │   │   ├── fleet-map.tsx
+│   │   │   ├── fleet-map-wrapper.tsx
+│   │   │   ├── alert-center.tsx
+│   │   │   ├── orders-panel.tsx
+│   │   │   ├── copilot-panel.tsx
+│   │   │   ├── warehouse-panel.tsx
+│   │   │   ├── disruption-simulator.tsx
+│   │   │   ├── agent-collaboration-view.tsx
+│   │   │   ├── decision-feed.tsx
+│   │   │   ├── activity-timeline.tsx
+│   │   │   ├── delivery-replay.tsx
+│   │   │   ├── simulation-controls.tsx
+│   │   │   ├── fleet-health-panel.tsx
+│   │   │   ├── driver-leaderboard.tsx
+│   │   │   ├── predictive-cards.tsx
+│   │   │   └── executive-metrics.tsx
 │   │   │
 │   │   ├── ui/                     # Reusable UI primitives (6 files)
-│   │   │   ├── alert-card.tsx          # Alert display card
-│   │   │   ├── animated-counter.tsx    # Animated number transitions
-│   │   │   ├── metric-card.tsx         # KPI metric display
-│   │   │   ├── order-card.tsx          # Order summary card
-│   │   │   ├── status-badge.tsx        # Status indicator badges
-│   │   │   └── timeline-item.tsx       # Timeline event item
+│   │   │   ├── alert-card.tsx
+│   │   │   ├── animated-counter.tsx
+│   │   │   ├── metric-card.tsx
+│   │   │   ├── order-card.tsx
+│   │   │   ├── status-badge.tsx
+│   │   │   └── timeline-item.tsx
 │   │   │
-│   │   ├── command-palette.tsx     # Cmd+K command palette
-│   │   └── Logo.tsx                # App logo component
+│   │   ├── command-palette.tsx
+│   │   └── Logo.tsx
 │   │
-│   ├── hooks/                  # 🪝 Custom React Hooks
+│   ├── hooks/
 │   │   ├── useSimulation.ts        # Master simulation game loop
 │   │   └── useCommandPalette.ts    # Command palette keyboard handler
 │   │
-│   ├── lib/                    # 📚 Utilities & Data
+│   ├── lib/
 │   │   ├── simulation/
 │   │   │   └── locations.ts        # City coordinates & route data
 │   │   └── utils.ts                # Helper functions (cn, formatters)
 │   │
 │   └── app/                    # 📄 Next.js App Router
-│       ├── layout.tsx              # Root layout with metadata
-│       ├── page.tsx                # Main dashboard page
-│       ├── globals.css             # Global styles & design tokens
-│       └── favicon.ico             # App icon
+│       ├── layout.tsx
+│       ├── page.tsx
+│       ├── globals.css
+│       └── favicon.ico
 │
-├── next.config.ts              # Next.js config (static export + basePath)
-├── tsconfig.json               # TypeScript configuration
-├── postcss.config.mjs          # PostCSS + Tailwind plugin config
-├── eslint.config.mjs           # ESLint configuration
-├── package.json                # Dependencies & scripts
-└── README.md                   # You are here!
+├── next.config.ts
+├── tsconfig.json
+├── postcss.config.mjs
+├── eslint.config.mjs
+├── package.json
+└── README.md
 ```
 
 ---
@@ -381,7 +386,7 @@ This project is pre-configured for static export, making it ideal for **GitHub P
 
 4. Your app will be live at:
    ```
-   https://<username>.github.io/AI-Logistics-Dispatcher/
+   https://arc-coder07.github.io/AI-Logistics-Dispatcher/
    ```
 
 ### Other Platforms
@@ -507,4 +512,3 @@ This project is licensed under the **MIT License** — feel free to use it as a 
 [⬆ Back to Top](#-ai-logistics-dispatcher)
 
 </div>
-]]>
