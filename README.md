@@ -1,101 +1,64 @@
-# AI Logistics Dispatcher 🛰️
-**Human-in-the-Loop Autonomous Operations Control Tower**
+# AI Logistics Dispatcher 🚀
 
-> A futuristic, AI-powered logistics operations dashboard built with Next.js 15, Zustand, and Framer Motion.
+An Autonomous Logistics Simulation Control Tower built with **Next.js 16**, **React**, **Zustand**, and **Framer Motion**. This project serves as a sophisticated digital twin of a logistics network, demonstrating real-time event-driven agent collaboration, dynamic pathfinding, and disruption simulation.
 
-<!-- 
-=========================================
-🎥 DEMO PLACEHOLDER
-=========================================
-Replace the image below with your actual demo GIF, video, or screenshot.
--->
-<p align="center">
-  <img src="/public/image1.png" alt="AI Logistics Dispatcher Demo" width="100%" />
-</p>
-<!-- To use a video instead, replace the img tag with: 
-<video src="your-video-url.mp4" controls="controls" muted="muted" style="max-width: 100%;"></video> 
--->
+![Control Tower UI](./public/screenshot.png)
 
-## Overview
-The AI Logistics Dispatcher is a mission-control style dashboard that blends the aesthetics of SpaceX, Linear, and Stripe with autonomous logistics dispatch. It simulates a real-time logistics fleet across San Francisco, complete with auto-generated orders, AI-driven dispatch, and human-in-the-loop oversight.
+## ✨ Core Capabilities
 
-It demonstrates advanced modern frontend engineering, focusing on:
-- 🤖 **Autonomous Decision Making**: AI agents assign drivers and recommend actions.
-- 🧑‍💻 **Human-in-the-loop**: Operators must approve or reject critical AI recommendations.
-- ⚡ **Real-time Systems**: Simulated live data flow using Zustand (mimicking WebSockets).
-- 🗺️ **Interactive Mapping**: Live fleet tracking with Leaflet and OpenStreetMap.
-- ✨ **Exceptional UX**: Dark mode first, glassmorphism, fluid animations with Framer Motion.
+- **Digital Twin Simulation:** Runs entirely in the browser using `requestAnimationFrame`, simulating fleets, live traffic, and dynamic order prioritization.
+- **Multi-Agent Architecture:** A network of 7 distinct AI agents (Dispatch, Routing, Operations, Fleet, Delay, Communication, Monitoring) that collaborate to resolve anomalies automatically.
+- **Predictive Analytics:** An Executive Analytics layer featuring KPI tracking, predictive delay modeling, and real-time SLA compliance calculations.
+- **Command Palette:** Keyboard-driven interface (`Cmd + K`) for instant control over simulation speed, disruption triggers, and view toggling.
+- **AI Copilot:** An intelligent assistant that dynamically synthesizes data from all live stores (Orders, Disruptions, Drivers, Vehicles) to answer operational queries.
 
-## Features
+## 🛠 Tech Stack
 
-- **Operations Command Center**: Beautiful KPI cards with animated counters, trend indicators, and live pulse dots.
-- **Interactive Fleet Map**: Live tracking of 8 simulated drivers across San Francisco with custom markers and route polylines.
-- **Driver & Order Simulation Engines**: Drivers move automatically every few seconds. New orders are generated based on real-world probability distributions.
-- **AI Alert Center**: Continuous monitoring generates alerts for traffic, weather, or driver overload, including confidence scores and predicted impact.
-- **AI Copilot Panel**: A persistent chat interface that queries live dashboard data to generate intelligent, context-aware responses to operator queries.
-- **Disruption Simulator**: Test operational resilience by manually triggering traffic jams, severe weather, vehicle breakdowns, or demand spikes.
+- **Framework:** Next.js 16 (App Router)
+- **Styling:** Tailwind CSS + `lucide-react`
+- **State Management:** Zustand (8+ stores managing distinct slices of the simulation)
+- **Animations:** Framer Motion
+- **Map Rendering:** Custom CSS Grid + SVG pathing
 
-## Architecture
+## 🏗 System Architecture
 
-The application runs entirely client-side for immediate demo capability, utilizing an event-driven architecture that can easily be decoupled and moved to a real backend (e.g., FastAPI/Supabase).
+### The Simulation Loop (`useSimulation.ts`)
+The heartbeat of the app is a global game-loop that ticks every 500ms (at 1x speed). It orchestrates:
+1. `orderEngine`: Spawns new deliveries and updates active vehicle GPS coordinates using A* pathfinding.
+2. `driverEngine`: Tracks driver shift fatigue and stamina.
+3. `trafficEngine`: Generates dynamic weather and congestion zones.
+4. `agentOrchestrator`: Triggers collaborative AI agent chains based on system events.
 
-### AI Agents
-1. **Dispatch Agent**: Scores drivers based on distance (40%), workload (35%), and rating (25%) to assign orders, generating human-readable reasoning.
-2. **Monitoring Agent**: Scans for anomalies (delayed deliveries, overloaded drivers) every 20 seconds and issues alerts.
-3. **Routing Agent**: Optimizes routes and suggests rerouting during active disruptions.
-4. **Communication Agent**: Powers the AI Copilot by synthesizing data from all stores to answer operator queries.
+### The Agent Network
+When a disruption occurs (e.g., a "Traffic Jam"), the orchestrator fires an event into the bus. The `Routing Agent` detects the delay, re-routes the vehicle, and passes context to the `Delay Agent`. The `Delay Agent` analyzes SLA risk and escalates to the `Dispatch Agent` if a higher-priority driver needs to be assigned. All of this is visualized in real-time in the **Decision Feed**.
 
-### Tech Stack
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **State Management**: Zustand
-- **Animations**: Framer Motion
-- **Map**: Leaflet (`react-leaflet`)
-- **Styling**: TailwindCSS v4 + Custom Glassmorphism CSS
-- **Icons**: Lucide React
-
-## Quick Start
-
-Run the project locally to see the simulation in action.
+## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js (v18 or higher)
-- npm
+- Node.js (v18+)
+- npm or pnpm
 
 ### Installation
 
 1. Clone the repository
-```bash
-git clone https://github.com/yourusername/ai-logistics-dispatcher.git
-cd ai-logistics-dispatcher
-```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-2. Install dependencies
-```bash
-npm install
-```
+## 🗺 Application Layout
 
-3. Start the development server
-```bash
-npm run dev
-```
+- **Dispatcher View:** The main operational interface. Watch live vehicles move across the grid, manage active orders, track warehouse capacity, and trigger disruptions.
+- **Analytics View:** Executive-level KPI dashboard. View Fleet Health (battery degradation & maintenance), Driver Leaderboards, and Predictive Delay Risk mapping.
 
-4. Open your browser and navigate to [http://localhost:3000](http://localhost:3000)
+### UI Enhancements
+- **Expandable Panels:** Click the `Maximize` icon on complex views like the *Activity Timeline* or *Delivery Replay* to view them in an expanded overlay.
+- **Copilot Querying:** Ask the Copilot "Which drivers are overloaded?" to get real-time computed responses from the active simulation state.
 
-## Project Structure
-
-```text
-src/
-├── agents/            # AI Agents and Event Bus logic
-├── app/               # Next.js App Router (layout, globals.css, main page)
-├── components/
-│   ├── panels/        # Major dashboard sections (Map, Alerts, Copilot, etc.)
-│   └── ui/            # Reusable primitives (Metric Cards, Badges, Timeline Items)
-├── hooks/             # Custom hooks (e.g., useSimulation master loop)
-├── lib/               # Utilities and simulation data (SF locations, names)
-└── store/             # Zustand stores for state management
-```
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📄 License
+MIT License. Feel free to use this as a boilerplate for complex dashboard and simulation architectures.
