@@ -21,7 +21,15 @@ A sophisticated **digital twin** of a logistics network running entirely in the 
 
 ## 🎥 Demo
 
-<video src="./public/demo-video-compressed.mp4" controls width="100%"></video>
+<!-- TO ADD YOUR DEMO VIDEO:
+     1. Go to https://github.com/Arc-coder07/AI-Logistics-Dispatcher/issues/new
+     2. Drag & drop the NEW `public/demo-video-compressed.mp4` file into the comment box
+     3. GitHub will upload it and give you a URL like:
+        https://github.com/user-attachments/assets/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+     4. Replace the URL in the line below with your actual video URL
+-->
+
+https://github.com/user-attachments/assets/3c49fea6-e686-4203-b53b-fb8203cb0674
 
 ---
 
