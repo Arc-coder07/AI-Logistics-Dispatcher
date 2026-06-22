@@ -23,8 +23,6 @@ A sophisticated **digital twin** of a logistics network running entirely in the 
 
 <video src="./public/demo-video-compressed.mp4" controls width="100%"></video>
 
-> **Note on Video File Size:** The video is located at `public/demo-video-compressed.mp4` and has been optimized to just 2.8MB, making it perfectly lightweight to commit and push directly to your repository!
-
 ---
 
 ## 📸 Screenshots
