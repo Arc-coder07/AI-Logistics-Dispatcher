@@ -17,6 +17,8 @@ import { DeliveryReplay } from "@/components/panels/delivery-replay";
 import { FleetHealthPanel } from "@/components/panels/fleet-health-panel";
 import { DriverLeaderboard } from "@/components/panels/driver-leaderboard";
 import { PredictiveCards } from "@/components/panels/predictive-cards";
+import { ExecutiveMetrics } from "@/components/panels/executive-metrics";
+import { CommandPalette } from "@/components/command-palette";
 
 type View = "dispatcher" | "analytics";
 
@@ -28,6 +30,8 @@ export default function Dashboard() {
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
+      <CommandPalette />
+      
       {/* Top Navigation */}
       <TopNav
         onToggleDisruptions={() => setDisruptionPanelOpen(!disruptionPanelOpen)}
@@ -110,6 +114,11 @@ export default function Dashboard() {
       {currentView === "analytics" && (
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3">
           <div className="max-w-5xl mx-auto space-y-4">
+            {/* Executive KPIs */}
+            <div className="h-[140px]">
+              <ExecutiveMetrics />
+            </div>
+
             {/* Predictive Analytics */}
             <div className="h-[120px]">
               <PredictiveCards />
