@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { X } from "lucide-react";
 import { useSimulation } from "@/hooks/useSimulation";
 import { TopNav } from "@/components/panels/top-nav";
 import { KPIStrip } from "@/components/panels/kpi-strip";
@@ -25,12 +26,42 @@ type View = "dispatcher" | "analytics";
 export default function Dashboard() {
   const [disruptionPanelOpen, setDisruptionPanelOpen] = useState(false);
   const [currentView, setCurrentView] = useState<View>("dispatcher");
+  const [expandedPanel, setExpandedPanel] = useState<string | null>(null);
+
+  // Close panel on escape
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setExpandedPanel(null);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
 
   useSimulation();
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <CommandPalette />
+
+      {/* Expanded Modal Overlay */}
+      {expandedPanel && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-6 lg:p-12">
+          <div className="relative w-full h-full max-w-[1400px] flex flex-col bg-[#09090b] rounded-2xl border border-white/10 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <button
+              onClick={() => setExpandedPanel(null)}
+              className="absolute top-4 right-4 z-[60] p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="flex-1 overflow-hidden">
+              {expandedPanel === "timeline" && <ActivityTimeline isExpanded />}
+              {expandedPanel === "replay" && <DeliveryReplay isExpanded />}
+              {expandedPanel === "collab" && <AgentCollaborationView isExpanded />}
+              {expandedPanel === "feed" && <DecisionFeed isExpanded />}
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Top Navigation */}
       <TopNav
@@ -88,11 +119,11 @@ export default function Dashboard() {
             <div className="col-span-12 lg:col-span-3 flex flex-col gap-2.5 min-h-0 overflow-hidden">
               {/* Agent Collaboration View */}
               <div className="flex-1 min-h-[200px]">
-                <AgentCollaborationView />
+                <AgentCollaborationView onExpand={() => setExpandedPanel("collab")} />
               </div>
               {/* Decision Feed */}
               <div className="h-[220px] shrink-0">
-                <DecisionFeed />
+                <DecisionFeed onExpand={() => setExpandedPanel("feed")} />
               </div>
             </div>
 
@@ -101,10 +132,10 @@ export default function Dashboard() {
           {/* Activity Timeline & Replay — bottom bar */}
           <div className="h-[160px] shrink-0 px-3 pb-2.5 pt-2 flex gap-2.5">
             <div className="flex-1 min-w-0">
-              <ActivityTimeline />
+              <ActivityTimeline onExpand={() => setExpandedPanel("timeline")} />
             </div>
             <div className="w-[350px] shrink-0">
-              <DeliveryReplay />
+              <DeliveryReplay onExpand={() => setExpandedPanel("replay")} />
             </div>
           </div>
         </div>
@@ -115,32 +146,32 @@ export default function Dashboard() {
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3">
           <div className="max-w-5xl mx-auto space-y-4">
             {/* Executive KPIs */}
-            <div className="h-[140px]">
+            <div className="min-h-[140px]">
               <ExecutiveMetrics />
             </div>
 
             {/* Predictive Analytics */}
-            <div className="h-[120px]">
+            <div className="min-h-[120px]">
               <PredictiveCards />
             </div>
 
             {/* Fleet Health & Driver Performance */}
-            <div className="grid grid-cols-12 gap-4 h-[400px]">
-              <div className="col-span-12 lg:col-span-8 h-full">
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+              <div className="col-span-1 lg:col-span-8 min-h-[400px]">
                 <FleetHealthPanel />
               </div>
-              <div className="col-span-12 lg:col-span-4 h-full">
+              <div className="col-span-1 lg:col-span-4 min-h-[400px]">
                 <DriverLeaderboard />
               </div>
             </div>
 
             {/* Agent Decisions in Analytics view */}
-            <div className="grid grid-cols-2 gap-4 h-[300px]">
-              <div className="h-full">
-                <AgentCollaborationView />
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="min-h-[400px]">
+                <AgentCollaborationView onExpand={() => setExpandedPanel("collab")} />
               </div>
-              <div className="h-full">
-                <DecisionFeed />
+              <div className="min-h-[400px]">
+                <DecisionFeed onExpand={() => setExpandedPanel("feed")} />
               </div>
             </div>
           </div>
