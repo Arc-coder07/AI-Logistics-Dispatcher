@@ -1,15 +1,14 @@
 import { useWarehouseStore } from "@/store/warehouseStore";
-import { useOrderStore } from "@/store/orderStore";
 import { useDisruptionStore } from "@/store/disruptionStore";
+import { DisruptionType } from "@/store/types";
 
 export const warehouseEngine = {
   tick: () => {
     const warehouseStore = useWarehouseStore.getState();
     const disruptionStore = useDisruptionStore.getState();
-    const orderStore = useOrderStore.getState();
 
     // If warehouse failed, do not process anything
-    if (disruptionStore.isActive("warehouse-failure" as any)) {
+    if (disruptionStore.isActive(DisruptionType.WAREHOUSE_FAILURE)) {
       return;
     }
 

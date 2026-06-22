@@ -2,7 +2,7 @@ import { useOrderStore } from "@/store/orderStore";
 import { useTimelineStore } from "@/store/timelineStore";
 import { useDisruptionStore } from "@/store/disruptionStore";
 import { useWarehouseStore } from "@/store/warehouseStore";
-import { TimelineEventType, AgentName } from "@/store/types";
+import { TimelineEventType, DisruptionType } from "@/store/types";
 import { dispatchAgent } from "@/agents/dispatchAgent";
 
 let ticksSinceLastOrder = 0;
@@ -10,8 +10,8 @@ let ticksSinceLastOrder = 0;
 export const orderEngine = {
   tick: () => {
     const disruptionStore = useDisruptionStore.getState();
-    const demandSpikeActive = disruptionStore.isActive("demand-spike" as any);
-    const warehouseFailureActive = disruptionStore.isActive("warehouse-failure" as any);
+    const demandSpikeActive = disruptionStore.isActive(DisruptionType.DEMAND_SPIKE);
+    const warehouseFailureActive = disruptionStore.isActive(DisruptionType.WAREHOUSE_FAILURE);
     
     // If warehouse failed, no orders can be processed
     if (warehouseFailureActive) {

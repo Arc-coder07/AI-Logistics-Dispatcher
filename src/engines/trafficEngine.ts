@@ -1,4 +1,5 @@
 import { useDisruptionStore } from "@/store/disruptionStore";
+import { DisruptionType } from "@/store/types";
 
 // The traffic engine handles modifying global or regional traffic conditions
 // based on disruptions and time of day.
@@ -12,8 +13,8 @@ export const trafficEngine = {
     // dynamically when moving drivers in the driverEngine.
     // For now, this is a placeholder for the periodic evaluation of traffic.
     const disruptionStore = useDisruptionStore.getState();
-    const trafficJamActive = disruptionStore.isActive("traffic-jam" as any);
-    const heavyRainActive = disruptionStore.isActive("heavy-rain" as any);
+    const trafficJamActive = disruptionStore.isActive(DisruptionType.TRAFFIC_JAM);
+    const heavyRainActive = disruptionStore.isActive(DisruptionType.HEAVY_RAIN);
     
     // We can emit events or update a global traffic state
     // Let's assume DriverEngine will check disruptions directly for now
