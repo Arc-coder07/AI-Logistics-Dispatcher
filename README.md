@@ -21,17 +21,9 @@ A sophisticated **digital twin** of a logistics network running entirely in the 
 
 ## 🎥 Demo
 
-<!-- TO ADD YOUR DEMO VIDEO:
-     1. Go to https://github.com/Arc-coder07/AI-Logistics-Dispatcher/issues/new
-     2. Drag & drop your .mov file into the comment box
-     3. GitHub will upload it and give you a URL like:
-        https://github.com/user-attachments/assets/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-     4. Replace the URL in the line below with your actual video URL
--->
+<video src="./public/demo-video.mov" controls width="100%"></video>
 
-https://github.com/user-attachments/assets/REPLACE-WITH-YOUR-VIDEO-ID
-
-> ⬆️ **To activate the video above:** Upload your screen recording to a [GitHub Issue comment](https://github.com/Arc-coder07/AI-Logistics-Dispatcher/issues/new), copy the generated URL, and replace the placeholder URL above.
+> **Note on Video File Size:** The `demo-video.mov` file is quite large (84MB). If you plan to push this to GitHub, it will work because it's under GitHub's 100MB limit, but it might make the repository slower to clone. If you want to keep the repository lightweight in the future, you can use the "Upload to GitHub Issue" method mentioned previously to host the video outside the source code tree.
 
 ---
 
