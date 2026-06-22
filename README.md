@@ -8,12 +8,12 @@ An **Autonomous Logistics Simulation Control Tower** built with **Next.js 16**, 
 
 ### Dispatcher View
 
-  <img src="/public/image1.png" alt="AgenticVC Screenshot" width="800"/>
+  <img src="/public/image2.png" alt="Dispatcher View Screenshot" width="1000"/>
 
 > **Description:** The main operational interface. Watch live vehicles move across the grid, manage active orders, track warehouse capacity, and trigger disruptions in real-time.
 
 ### Analytics View
-*(Placeholder for Analytics View Screenshot)*
+<img src="/public/image3.png" alt="Analytics View Screenshot" width="1000"/>
 > **Description:** Executive-level KPI dashboard. View Fleet Health (battery degradation & maintenance), Driver Leaderboards, and Predictive Delay Risk mapping.
 
 ---
