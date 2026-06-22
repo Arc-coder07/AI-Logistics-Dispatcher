@@ -4,6 +4,7 @@ import { useOrderStore } from "@/store/orderStore";
 import { useDriverStore } from "@/store/driverStore";
 import { useVehicleStore } from "@/store/vehicleStore";
 import { DollarSign, Percent, TrendingUp, TrendingDown, Users, Package } from "lucide-react";
+import { OrderStatus, DriverStatus } from "@/store/types";
 import { cn } from "@/lib/utils";
 
 export function ExecutiveMetrics() {
@@ -11,7 +12,7 @@ export function ExecutiveMetrics() {
   const drivers = useDriverStore((s) => s.drivers);
   const vehicles = useVehicleStore((s) => s.vehicles);
 
-  const completedOrders = orders.filter((o) => o.status === "DELIVERED").length;
+  const completedOrders = orders.filter((o) => o.status === OrderStatus.DELIVERED).length;
   // A simplistic revenue calculation: $45 per delivery, minus $12 driver cost, minus $5 fuel
   const revenue = completedOrders * 45;
   const cost = completedOrders * 17;
@@ -19,11 +20,11 @@ export function ExecutiveMetrics() {
 
   const slaCompliance =
     orders.length > 0
-      ? Math.round(((orders.length - orders.filter((o) => o.status === "DELAYED").length) / orders.length) * 100)
+      ? Math.round(((orders.length - orders.filter((o) => o.status === OrderStatus.DELAYED).length) / orders.length) * 100)
       : 100;
 
   const fleetUtilization = Math.round(
-    (drivers.filter((d) => d.status === "BUSY").length / Math.max(1, drivers.length)) * 100
+    (drivers.filter((d) => d.status !== DriverStatus.IDLE && d.status !== DriverStatus.OFFLINE).length / Math.max(1, drivers.length)) * 100
   );
 
   return (

@@ -49,31 +49,15 @@ export function CommandPalette() {
     },
     {
       id: "trigger-traffic",
-      label: "Trigger Global Traffic Jam",
+      label: "Toggle Global Traffic Jam",
       icon: <AlertTriangle className="h-4 w-4 text-red-500" />,
-      action: () => disruptionStore.triggerDisruption({
-        id: `jam-${Date.now()}`,
-        type: DisruptionType.TRAFFIC_JAM,
-        affectedZones: ["SF_DOWNTOWN"],
-        severity: "critical",
-        startTime: Date.now(),
-        description: "Command Palette triggered traffic jam",
-        active: true,
-      }),
+      action: () => disruptionStore.toggleDisruption(DisruptionType.TRAFFIC_JAM),
     },
     {
       id: "trigger-warehouse",
-      label: "Simulate Warehouse Failure",
+      label: "Toggle Warehouse Failure",
       icon: <Truck className="h-4 w-4 text-red-500" />,
-      action: () => disruptionStore.triggerDisruption({
-        id: `fail-${Date.now()}`,
-        type: DisruptionType.WAREHOUSE_FAILURE,
-        affectedZones: ["SF_SOUTH"],
-        severity: "critical",
-        startTime: Date.now(),
-        description: "Warehouse systems offline",
-        active: true,
-      }),
+      action: () => disruptionStore.toggleDisruption(DisruptionType.WAREHOUSE_FAILURE),
     }
   ];
 

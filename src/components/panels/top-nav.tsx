@@ -7,6 +7,7 @@ import { Zap, Activity, BarChart3, Brain } from "lucide-react";
 import { useAlertStore } from "@/store/alertStore";
 import { useDisruptionStore } from "@/store/disruptionStore";
 import { useAgentStore } from "@/store/agentStore";
+import { AlertActionStatus } from "@/store/types";
 import { SimulationControls } from "@/components/panels/simulation-controls";
 import { cn } from "@/lib/utils";
 
@@ -27,7 +28,7 @@ export function TopNav({
 }: TopNavProps) {
   const [time, setTime] = useState("");
   const alerts = useAlertStore((s) => s.alerts);
-  const pendingAlerts = alerts.filter((a) => a.status === "pending");
+  const pendingAlerts = alerts.filter((a) => a.actionStatus === AlertActionStatus.PENDING);
   
   const disruptions = useDisruptionStore((s) => s.disruptions);
   const activeDisruptions = disruptions.filter((d) => d.active);

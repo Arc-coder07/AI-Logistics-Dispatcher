@@ -241,6 +241,16 @@ export interface KPIData {
   delayedTrend: number;
 }
 
+export interface DriverPerformance {
+  driverId: string;
+  driverName: string;
+  onTimePercent: number; // 0-100
+  avgETAAccuracy: number; // minutes variance
+  rating: number; // 1-5
+  fuelEfficiency: number; // 0-100 score
+  score: number; // 0-100 overall computed score
+}
+
 // --- Simulation & Digital Twin Types ---
 
 export interface SimulationState {
