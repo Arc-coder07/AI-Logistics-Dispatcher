@@ -11,6 +11,15 @@
   --border: rgba(255, 255, 255, 0.06);
   --accent: #3b82f6;
   --accent-glow: rgba(59, 130, 246, 0.15);
+
+  /* Agent Colors */
+  --agent-dispatch: #10b981;
+  --agent-route: #3b82f6;
+  --agent-delay: #f59e0b;
+  --agent-fleet: #8b5cf6;
+  --agent-operations: #06b6d4;
+  --agent-communication: #ec4899;
+  --agent-monitoring: #f97316;
 }
 
 /* --- Base Styles --- */
