@@ -26,8 +26,11 @@ export function TopNav({
   onViewChange,
 }: TopNavProps) {
   const [time, setTime] = useState("");
-  const pendingAlerts = useAlertStore((s) => s.getPendingAlerts());
-  const activeDisruptions = useDisruptionStore((s) => s.getActiveDisruptions());
+  const alerts = useAlertStore((s) => s.alerts);
+  const pendingAlerts = alerts.filter((a) => a.status === "pending");
+  
+  const disruptions = useDisruptionStore((s) => s.disruptions);
+  const activeDisruptions = disruptions.filter((d) => d.active);
   const agents = useAgentStore((s) => s.agents);
 
   // Compute system status
