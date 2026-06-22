@@ -7,20 +7,25 @@ import {
   AlertSeverity,
   DisruptionType,
   TimelineEventType,
+  AgentName,
+  OrderStatus,
 } from "@/store/types";
 import { useDriverStore } from "@/store/driverStore";
 import { useOrderStore } from "@/store/orderStore";
 import { useAlertStore } from "@/store/alertStore";
 import { useTimelineStore } from "@/store/timelineStore";
 import { useDisruptionStore } from "@/store/disruptionStore";
+import { useAgentStore } from "@/store/agentStore";
 import { eventBus } from "@/agents/eventBus";
 import { pickRandom } from "@/lib/utils";
 
 export class MonitoringAgent {
   checkForIssues(): void {
+    useAgentStore.getState().setAgentStatus(AgentName.MONITORING, "thinking", "Scanning for anomalies...");
     this.checkDelayedDeliveries();
     this.checkOverloadedDrivers();
     this.checkDisruptions();
+    useAgentStore.getState().setAgentStatus(AgentName.MONITORING, "idle", "Monitoring complete");
   }
 
   private checkDelayedDeliveries(): void {
@@ -29,20 +34,19 @@ export class MonitoringAgent {
     const timelineStore = useTimelineStore.getState();
 
     const activeOrders = orders.filter(
-      (o) => o.status !== "delivered" && o.status !== "created"
+      (o) => o.status !== OrderStatus.DELIVERED && o.status !== OrderStatus.CREATED
     );
 
-    // Randomly flag some orders as delayed for simulation
     const delayCandidate = activeOrders.find(
       (o) =>
-        o.status === "delivering" &&
+        o.status === OrderStatus.DELIVERING &&
         Math.random() < 0.15
     );
 
     if (delayCandidate) {
-      useOrderStore.getState().updateOrderStatus(delayCandidate.id, "delayed" as never);
+      useOrderStore.getState().updateOrderStatus(delayCandidate.id, OrderStatus.DELAYED);
 
-      const alert = alertStore.addAlert({
+      alertStore.addAlert({
         type: AlertType.DELAY,
         severity: AlertSeverity.MEDIUM,
         title: "Delivery Delay Detected",
@@ -52,15 +56,27 @@ export class MonitoringAgent {
         recommendation: `Notify customer and consider reassignment to a closer driver`,
         confidence: Math.floor(Math.random() * 15) + 80,
         impact: `${Math.floor(Math.random() * 10) + 3} minute delay reduction possible`,
+        agentSource: AgentName.MONITORING,
       });
 
       timelineStore.addEvent({
         type: TimelineEventType.ALERT_TRIGGERED,
         title: "Delay Alert",
-        description: `AI detected potential delay for ${delayCandidate.id}`,
+        description: `Monitoring Agent detected potential delay for ${delayCandidate.id}`,
+        agentSource: AgentName.MONITORING,
       });
 
-      eventBus.emit("ALERT_TRIGGERED", { alert });
+      useAgentStore.getState().addDecision({
+        agentName: AgentName.MONITORING,
+        action: `Delay flagged for ${delayCandidate.id}`,
+        reasoning: `Order in DELIVERING status — statistical delay pattern detected`,
+        confidence: 80,
+        impact: "Operator alerted for review",
+        relatedEntities: [delayCandidate.id],
+        status: "complete",
+      });
+
+      eventBus.emit("ALERT_TRIGGERED", { alert: { type: AlertType.DELAY } });
     }
   }
 

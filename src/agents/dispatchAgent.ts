@@ -2,15 +2,19 @@
 // Dispatch Agent — AI Driver Assignment
 // ============================================================
 
-import { Order, OrderPriority, TimelineEventType } from "@/store/types";
+import { Order, OrderPriority, TimelineEventType, AgentName } from "@/store/types";
 import { useDriverStore } from "@/store/driverStore";
 import { useOrderStore } from "@/store/orderStore";
 import { useTimelineStore } from "@/store/timelineStore";
+import { useAgentStore } from "@/store/agentStore";
 import { eventBus } from "@/agents/eventBus";
 import { haversineDistance } from "@/lib/utils";
 
 export class DispatchAgent {
   dispatch(order: Order): void {
+    const agentStore = useAgentStore.getState();
+    agentStore.setAgentStatus(AgentName.DISPATCH, "thinking", `Evaluating drivers for ${order.id}...`);
+
     const driverStore = useDriverStore.getState();
     const orderStore = useOrderStore.getState();
     const timelineStore = useTimelineStore.getState();
@@ -25,7 +29,9 @@ export class DispatchAgent {
         type: TimelineEventType.SYSTEM_EVENT,
         title: "No Drivers Available",
         description: `Order ${order.id} queued — all drivers are currently busy`,
+        agentSource: AgentName.DISPATCH,
       });
+      agentStore.setAgentStatus(AgentName.DISPATCH, "idle", "No drivers available — order queued");
       return;
     }
 
@@ -56,6 +62,8 @@ export class DispatchAgent {
     scored.sort((a, b) => b.totalScore - a.totalScore);
     const best = scored[0];
 
+    agentStore.setAgentStatus(AgentName.DISPATCH, "acting", `Assigning ${best.driver.name}...`);
+
     // Generate reasoning
     const reasons: string[] = [];
     if (scored.length > 1 && best.distanceScore >= scored[1].distanceScore) {
@@ -75,6 +83,17 @@ export class DispatchAgent {
 
     const reasoning = `Assigned ${best.driver.name}\n\nReasoning:\n• ${reasons.join("\n• ")}`;
 
+    // Record decision in agent store
+    agentStore.addDecision({
+      agentName: AgentName.DISPATCH,
+      action: `Assigned ${best.driver.name} to ${order.id}`,
+      reasoning: `Scored ${scored.length} available drivers. ${reasons.join(" | ")}. Score: ${(best.totalScore * 100).toFixed(0)}%`,
+      confidence: Math.round(best.totalScore * 100),
+      impact: `${order.priority} priority delivery — ETA ${eta} min`,
+      relatedEntities: [order.id, best.driver.id],
+      status: "complete",
+    });
+
     // Execute assignment
     orderStore.assignDriver(order.id, best.driver.id, best.driver.name, reasoning);
     driverStore.assignOrder(
@@ -87,7 +106,8 @@ export class DispatchAgent {
     timelineStore.addEvent({
       type: TimelineEventType.DRIVER_ASSIGNED,
       title: "Driver Assigned by AI",
-      description: `${best.driver.name} assigned to ${order.id} (${order.priority} priority) — ${reasons[0]}`,
+      description: `${best.driver.name} → ${order.id} (${order.priority}) — ${reasons[0]}`,
+      agentSource: AgentName.DISPATCH,
     });
 
     // Emit event
@@ -96,6 +116,8 @@ export class DispatchAgent {
       driverId: best.driver.id,
       reasoning,
     });
+
+    agentStore.setAgentStatus(AgentName.DISPATCH, "idle", `${best.driver.name} dispatched`);
   }
 }
 
