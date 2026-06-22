@@ -21,9 +21,9 @@ A sophisticated **digital twin** of a logistics network running entirely in the 
 
 ## 🎥 Demo
 
-<video src="./public/demo-video.mov" controls width="100%"></video>
+<video src="./public/demo-video-compressed.mp4" controls width="100%"></video>
 
-> **Note on Video File Size:** The `demo-video.mov` file is quite large (84MB). If you plan to push this to GitHub, it will work because it's under GitHub's 100MB limit, but it might make the repository slower to clone. If you want to keep the repository lightweight in the future, you can use the "Upload to GitHub Issue" method mentioned previously to host the video outside the source code tree.
+> **Note on Video File Size:** The video is located at `public/demo-video-compressed.mp4` and has been optimized to just 2.8MB, making it perfectly lightweight to commit and push directly to your repository!
 
 ---
 
